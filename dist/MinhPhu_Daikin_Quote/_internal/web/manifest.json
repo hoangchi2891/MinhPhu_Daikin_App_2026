@@ -1,0 +1,24 @@
+{
+  "name": "Minh Phú HVAC — Tra Cứu Daikin, Tính Nhiệt TCVN 5687 & Báo Giá",
+  "short_name": "Minh Phú HVAC",
+  "description": "Phần mềm kỹ thuật điều hòa Daikin: Tra cứu 207 Model & Côn đầu máy, Tính tải nhiệt TCVN 5687:2024, Daikin Duct Checker, CoolPack R410A/R32 & Báo giá tự động.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFFFFF",
+  "theme_color": "#991B1B",
+  "lang": "vi",
+  "icons": [
+    {
+      "src": "assets/app_icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo_minh_phu.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="vn.minhphuhvac.daikinquote"
+4    android:versionCode="2"
+5    android:versionName="2.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:4:5-67
+11-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:4:22-64
+12
+13    <application
+13-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:6:5-22:19
+14        android:allowBackup="true"
+14-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:7:9-35
+15        android:debuggable="true"
+16        android:extractNativeLibs="false"
+17        android:icon="@mipmap/ic_launcher"
+17-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:9:9-43
+18        android:label="Minh Phú HVAC"
+18-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:8:9-38
+19        android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
+19-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:11:9-77
+20        android:usesCleartextTraffic="true" >
+20-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:10:9-44
+21        <activity
+21-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:13:9-21:20
+22            android:name="vn.minhphuhvac.daikinquote.MainActivity"
+22-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:14:13-41
+23            android:configChanges="orientation|screenSize|keyboardHidden"
+23-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:16:13-74
+24            android:exported="true" >
+24-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:15:13-36
+25            <intent-filter>
+25-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:17:13-20:29
+26                <action android:name="android.intent.action.MAIN" />
+26-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:18:17-69
+26-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:18:25-66
+27
+28                <category android:name="android.intent.category.LAUNCHER" />
+28-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:19:17-77
+28-->H:\DAIKIN\MinhPhu_Daikin_App\android_apk_project\app\src\main\AndroidManifest.xml:19:27-74
+29            </intent-filter>
+30        </activity>
+31    </application>
+32
+33</manifest>

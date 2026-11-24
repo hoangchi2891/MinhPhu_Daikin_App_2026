@@ -1,0 +1,36 @@
+name: MinhPhuHVAC
+options:
+  bundleIdPrefix: vn.minhphuhvac
+  deploymentTarget:
+    iOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: "2.0.0"
+    CURRENT_PROJECT_VERSION: "2"
+    SWIFT_VERSION: "5.9"
+    PRODUCT_NAME: "MinhPhuHVAC"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    TARGETED_DEVICE_FAMILY: "1,2"
+    IPHONEOS_DEPLOYMENT_TARGET: "14.0"
+targets:
+  MinhPhuHVAC:
+    type: application
+    platform: iOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: Sources
+      - path: Resources/Assets.xcassets
+      - path: Resources/LaunchScreen.storyboard
+      - path: www
+        type: folder
+        buildPhase: resources
+    info:
+      path: Resources/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: vn.minhphuhvac.daikinquote
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_KEY_CFBundleDisplayName: "Minh Phú HVAC"
+        INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen

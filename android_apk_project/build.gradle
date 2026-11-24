@@ -1,0 +1,4 @@
+// Top-level build file for Minh Phú HVAC — Android APK
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}

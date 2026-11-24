@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#991B1B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Minh Phú HVAC" />
+  <title>Minh Phú HVAC - Phần Mềm Tra Cứu Kỹ Thuật, Tính Nhiệt TCVN 5687 & Báo Giá Daikin</title>
+  <link rel="icon" href="assets/app_icon.png" />
+  <link rel="apple-touch-icon" href="assets/app_icon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/styles.css?v=20261124_5" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+      <div class="brand-box">
+        <div class="brand-logo-wrap">
+          <img src="assets/logo_minh_phu.png" alt="Minh Phú Logo" />
+        </div>
+        <div class="brand-text">
+          <h1>MINH PHÚ HVAC</h1>
+          <p>Daikin Quote & Spec Pro</p>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-section-label">Nghiệp vụ chính</div>
+        <button class="nav-btn active" data-view="catalog" onclick="switchView('catalog')">
+          <span class="nav-btn-left"><span>🔍</span> <span>Tra Cứu Model & Côn Gió</span></span>
+          <span class="nav-badge" id="badge-total-models">207</span>
+        </button>
+
+        <button class="nav-btn" data-view="cart" onclick="switchView('cart')">
+          <span class="nav-btn-left"><span>🛒</span> <span>Giỏ Hàng Công Trình</span></span>
+          <span class="nav-badge red" id="badge-cart-count">0</span>
+        </button>
+
+        <button class="nav-btn" data-view="preview" onclick="switchView('preview')">
+          <span class="nav-btn-left"><span>📄</span> <span>Mẫu Báo Giá & Xuất File</span></span>
+        </button>
+
+        <div class="nav-section-label">Kỹ thuật & Quản trị</div>
+        <button class="nav-btn" data-view="loadcalc" onclick="switchView('loadcalc')">
+          <span class="nav-btn-left"><span>📐</span> <span>Tính Nhiệt, Ống Gió & AI CAD</span></span>
+          <span class="nav-badge red">PRO</span>
+        </button>
+
+        <button class="nav-btn" data-view="library" onclick="switchView('library')">
+          <span class="nav-btn-left"><span>📚</span> <span>Thư Viện Catalogue PDF</span></span>
+          <span class="nav-badge">15</span>
+        </button>
+
+        <button class="nav-btn" data-view="admin" onclick="switchView('admin')">
+          <span class="nav-btn-left"><span>💰</span> <span>Quản Trị Giá Gốc & QR</span></span>
+        </button>
+      </nav>
+
+      <div class="sidebar-quick-links">
+        <div style="color:#94A3B8;font-weight:700;margin-bottom:5px;">TRA CỨU TRỰC TUYẾN DAIKIN</div>
+        <a class="ext-link" onclick="openExternalLink('https://www.daikincatalog.com/library/site/vietnam/book-lists/')">
+          🌐 Thư viện DaikinCatalog VN
+        </a>
+        <a class="ext-link" onclick="openExternalLink('https://www.daikin.com.vn/')">
+          🌐 Trang chủ Daikin Việt Nam
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div><strong>CÔNG TY TNHH PT KT TM MINH PHÚ</strong></div>
+        <div>Hotline: 0967 986 586 • MST: 0107709790</div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- TOP HEADER -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <h2 id="topbar-heading">Tra Cứu Model, Thông Số Kỹ Thuật & Côn Đầu Máy Daikin</h2>
+          <p id="topbar-sub">Cơ sở dữ liệu chuẩn hóa từ Báo giá VRV, Bảng Côn Đầu Dàn Lạnh & 15 Catalogue Tiếng Việt</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ice" onclick="switchView('cart')">
+            🛒 Giỏ công trình (<span id="top-cart-count">0</span>) — <strong id="top-cart-sum" style="color:#991B1B;">0 đ</strong>
+          </button>
+          <button class="btn btn-primary" onclick="switchView('preview')">
+            📄 Xem & Xuất Báo Giá
+          </button>
+        </div>
+      </header>
+
+      <!-- ====================================================================
+           VIEW 1: CATALOG & MODEL LOOKUP
+           ==================================================================== -->
+      <section id="view-catalog" class="view-panel active">
+        <div class="filter-card">
+          <div class="search-row">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔎</span>
+              <input type="text" id="search-input" placeholder="Nhập mã Model (VD: FXSQ63, RXYQ16, FBFC100, CDXM50, BRC1E63), công suất Btu/HP hoặc KT côn (795x180)..." oninput="renderCatalog()" />
+            </div>
+
+            <select id="category-select" class="select-ctrl" onchange="renderCatalog()">
+              <option value="ALL">Tất cả dòng sản phẩm</option>
+            </select>
+
+            <select id="filter-special" class="select-ctrl" onchange="renderCatalog()">
+              <option value="ALL">Tất cả thiết bị (207 mã)</option>
+              <option value="PRICED">Sẵn giá niêm yết trong kho</option>
+              <option value="DUCT_ONLY">Chỉ máy có Côn Gió / Hộp Gió</option>
+              <option value="OUTDOOR">Chỉ Dàn Nóng</option>
+              <option value="INDOOR">Chỉ Dàn Lạnh</option>
+            </select>
+
+            <select id="view-mode-select" class="select-ctrl" onchange="renderCatalog()">
+              <option value="grid">Hiển thị: Thẻ ảnh PNG</option>
+              <option value="table">Hiển thị: Bảng kỹ thuật</option>
+            </select>
+          </div>
+
+          <div class="system-pills" id="system-pills">
+            <button class="pill active" data-sys="ALL" onclick="selectSystem('ALL', this)">Tất cả hệ thống</button>
+            <button class="pill" data-sys="VRV" onclick="selectSystem('VRV', this)">Hệ Trung Tâm VRV (H / A / IV-S)</button>
+            <button class="pill" data-sys="SKYAIR" onclick="selectSystem('SKYAIR', this)">Hệ Thương Mại SkyAir</button>
+            <button class="pill" data-sys="MULTI" onclick="selectSystem('MULTI', this)">Hệ Super Multi NX R32</button>
+            <button class="pill" data-sys="ROOM_AIR" onclick="selectSystem('ROOM_AIR', this)">Dân Dụng Treo Tường FTHF</button>
+          </div>
+        </div>
+
+        <div class="stats-strip">
+          <div id="catalog-result-text">Đang hiển thị <strong>0</strong> sản phẩm</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-outline" onclick="switchView('admin')">💰 Bảng sửa Giá gốc đầu vào</button>
+            <button class="btn btn-sm btn-outline" onclick="openAddModelModal()">➕ Thêm Model mới</button>
+            <button class="btn btn-sm btn-ice" onclick="resetCatalogFilters()">🔄 Đặt lại bộ lọc</button>
+          </div>
+        </div>
+
+        <div id="catalog-container"></div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 2: PROJECT CART & MULTIPLIERS
+           ==================================================================== -->
+      <section id="view-cart" class="view-panel">
+        <div class="builder-grid">
+          <!-- Left Config Column -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="config-card">
+              <div class="config-card-head">1. Thông Tin Dự Án & Khách Hàng</div>
+              <div class="config-card-body">
+                <div class="form-group">
+                  <label>Số / Mã báo giá</label>
+                  <input type="text" id="q-code" value="BG-MP-20261124-01" oninput="syncQuoteMeta()" />
+                </div>
+                <div class="form-group">
+                  <label>Tên khách hàng / Chủ đầu tư</label>
+                  <input type="text" id="q-client" placeholder="VD: Anh Minh / Công ty CP Đầu tư ABC..." oninput="syncQuoteMeta()" />
+                </div>
+                <div class="form-group">
+                  <label>Tên công trình / Dự án</label>
+                  <input type="text" id="q-project" placeholder="VD: Biệt thự Vinhomes Riverside / Tòa nhà VP..." oninput="syncQuoteMeta()" />
+                </div>
+                <div class="form-group">
+                  <label>Địa điểm thi công</label>
+                  <input type="text" id="q-address" placeholder="VD: Quận Cầu Giấy, TP. Hà Nội" oninput="syncQuoteMeta()" />
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div class="form-group">
+                    <label>SĐT Khách hàng</label>
+                    <input type="text" id="q-phone" placeholder="09xx xxx xxx" oninput="syncQuoteMeta()" />
+                  </div>
+                  <div class="form-group">
+                    <label>Người lập báo giá</label>
+                    <input type="text" id="q-author" value="Phòng Kinh Doanh - Kỹ Thuật" oninput="syncQuoteMeta()" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-card">
+              <div class="config-card-head">2. Tùy Chọn Phạm Vi & Hệ Số Nhân Giá</div>
+              <div class="config-card-body">
+                <div class="form-group">
+                  <label>Hình thức xuất báo giá</label>
+                  <div class="mode-selector" id="quote-mode-selector">
+                    <div class="mode-option active" data-mode="BOTH" onclick="setQuoteMode('BOTH')">
+                      🏢 Trọn gói: Thiết bị + Nhân công & Vật tư (A + B)
+                    </div>
+                    <div class="mode-option" data-mode="EQUIP_ONLY" onclick="setQuoteMode('EQUIP_ONLY')">
+                      💎 Chỉ báo giá Thiết bị điều hòa (Phần A)
+                    </div>
+                    <div class="mode-option" data-mode="INSTALL_ONLY" onclick="setQuoteMode('INSTALL_ONLY')">
+                      🛠️ Chỉ báo giá Nhân công & Vật tư lắp đặt (Phần B)
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label style="font-size:11.5px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">
+                    Hệ số nhân trên đơn giá gốc (VD: 1.00 = Giá gốc, 1.15 = +15%)
+                  </label>
+                  <div class="multiplier-box">
+                    <div class="mult-item">
+                      <label>HS Thiết bị</label>
+                      <input type="number" id="mult-equip" step="0.01" min="0.1" value="1.00" oninput="updateMultipliers()" />
+                    </div>
+                    <div class="mult-item">
+                      <label>HS Vật tư</label>
+                      <input type="number" id="mult-mat" step="0.01" min="0.1" value="1.00" oninput="updateMultipliers()" />
+                    </div>
+                    <div class="mult-item">
+                      <label>HS Nhân công</label>
+                      <input type="number" id="mult-labor" step="0.01" min="0.1" value="1.00" oninput="updateMultipliers()" />
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div class="form-group">
+                    <label>Thuế GTGT (VAT)</label>
+                    <select id="q-vat" onchange="updateMultipliers()">
+                      <option value="10" selected>VAT 10%</option>
+                      <option value="8">VAT 8%</option>
+                      <option value="0">Chưa gồm VAT (0%)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Mức thanh toán VietQR</label>
+                    <select id="q-qr-mode" onchange="updateMultipliers()">
+                      <option value="100">100% Tổng thanh toán</option>
+                      <option value="50" selected>Tạm ứng 50% đơn hàng</option>
+                      <option value="30">Tạm ứng 30% đơn hàng</option>
+                      <option value="0">Không điền sẵn số tiền</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:4px;">
+                  <button class="btn btn-primary" style="width:100%;" onclick="switchView('preview')">
+                    📄 Chuyển sang Mẫu Báo Giá & Xuất Excel / PDF →
+                  </button>
+                  <button class="btn btn-outline btn-sm" style="flex:1;" onclick="saveProjectSnapshot()">💾 Lưu hồ sơ</button>
+                  <button class="btn btn-outline btn-sm" style="flex:1;" onclick="loadDemoSampleProject()">✨ Nạp dự án mẫu</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Cart Tables Column -->
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <!-- PART A: EQUIPMENT CART -->
+            <div class="config-card">
+              <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <span>PHẦN A — DANH MỤC THIẾT BỊ ĐIỀU HÒA ĐÃ CHỌN</span>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                  <label style="font-size:11.5px;color:#FFFFFF;display:flex;align-items:center;gap:4px;cursor:pointer;" title="Khi sửa cột Đơn giá gốc trong giỏ hàng, tự động lưu làm giá gốc đầu vào mặc định cho các báo giá sau">
+                    <input type="checkbox" id="chk-sync-base-price" checked /> Lưu giá gốc mới vào Kho chung
+                  </label>
+                  <button class="btn btn-sm btn-glass" style="font-weight:700;" onclick="openQuickEquipPickerModal()">➕ Chọn thêm Thiết bị (Xem ảnh & Thông số)</button>
+                  <button class="btn btn-sm btn-glass" onclick="autoSuggestAccessories()">⚡ Gợi ý Mặt nạ / Bộ chia / ĐK</button>
+                  <button class="btn btn-sm btn-glass" onclick="clearEquipCart()">🗑️ Xóa Phần A</button>
+                </div>
+              </div>
+              <div class="data-table-wrap" style="border:none;border-radius:0;">
+                <table class="clean-table">
+                  <thead>
+                    <tr>
+                      <th style="width:38px;">STT</th>
+                      <th style="width:92px;">Ảnh Thiết Bị</th>
+                      <th>Model, Hình Ảnh Chi Tiết & Thông Số Kỹ Thuật / Côn Gió</th>
+                      <th>Xuất xứ</th>
+                      <th>ĐVT</th>
+                      <th style="width:74px;">SL</th>
+                      <th style="width:124px;">Đơn giá gốc</th>
+                      <th style="width:124px;">Đơn giá báo (×HS)</th>
+                      <th style="width:128px;">Thành tiền</th>
+                      <th style="width:44px;">Xóa</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cart-equip-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- PART B: LABOR & MATERIALS CART -->
+            <div class="config-card">
+              <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <span>PHẦN B — VẬT TƯ & NHÂN CÔNG LẮP ĐẶT (Ống đồng, Nước ngưng, Điện, Côn & Ống gió)</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-sm btn-primary" onclick="autoEstimateMaterialsFromEquip()">⚡ Tự động bóc tách Vật tư & Nhân công từ Thiết bị</button>
+                  <button class="btn btn-sm btn-glass" onclick="openMaterialPickerModal()">➕ Chọn từ 105 mục Vật tư/NC</button>
+                  <button class="btn btn-sm btn-glass" onclick="addCustomInstallRow()">✍️ Thêm dòng tự gõ</button>
+                  <button class="btn btn-sm btn-glass" onclick="clearInstallCart()">🗑️ Xóa Phần B</button>
+                </div>
+              </div>
+              <div class="data-table-wrap" style="border:none;border-radius:0;">
+                <table class="clean-table">
+                  <thead>
+                    <tr>
+                      <th style="width:42px;">STT</th>
+                      <th>Hạng mục Vật tư / Nhân công</th>
+                      <th>Nhãn hiệu</th>
+                      <th>Loại</th>
+                      <th>ĐVT</th>
+                      <th style="width:78px;">Khối lượng</th>
+                      <th style="width:120px;">Giá gốc</th>
+                      <th style="width:120px;">Giá báo (×HS)</th>
+                      <th style="width:128px;">Thành tiền</th>
+                      <th style="width:46px;">Xóa</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cart-install-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- SAVED PROJECTS LIST -->
+            <div class="config-card">
+              <div class="config-card-head">📁 Lịch Sử Hồ Sơ Báo Giá Công Trình Đã Lưu</div>
+              <div class="config-card-body" id="saved-projects-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 3: QUOTATION PREVIEW & EXPORT (.XLSX / .PDF)
+           ==================================================================== -->
+      <section id="view-preview" class="view-panel">
+        <div class="quote-preview-toolbar no-print">
+          <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick="switchView('cart')">← Sửa Giỏ hàng / Hệ số</button>
+              <label style="font-size:12.5px;font-weight:700;color:#991B1B;display:flex;align-items:center;gap:5px;cursor:pointer;">
+                <input type="checkbox" id="chk-show-appendix" checked onchange="renderQuotePreview()" />
+                📋 Kèm Bảng Thông Số Kỹ Thuật & Côn Gió dưới Báo giá
+              </label>
+              <label style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer;">
+                <input type="checkbox" id="chk-show-img-in-quote" checked onchange="renderQuotePreview()" />
+                Ảnh PNG trong bảng giá
+              </label>
+              <label style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer;">
+                <input type="checkbox" id="chk-show-duct-in-quote" checked onchange="renderQuotePreview()" />
+                Tóm tắt thông số dưới tên máy
+              </label>
+            </div>
+            <div id="appendix-col-toggles" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:7px 11px;background:#F8FAFC;border:1px solid #CBD5E1;border-left:3.5px solid #991B1B;border-radius:8px;font-size:12px;">
+              <strong style="color:#991B1B;">Thêm / Cắt cột thông số dưới báo giá:</strong>
+              <label style="cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="app-col-dim" checked onchange="renderQuotePreview()"/> KT máy & Trọng lượng</label>
+              <label style="cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="app-col-pipe" checked onchange="renderQuotePreview()"/> Ống đồng & Nước xả</label>
+              <label style="cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="app-col-duct" checked onchange="renderQuotePreview()"/> KT Côn cấp / hồi & Hộp gió</label>
+              <label style="cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="app-col-air" checked onchange="renderQuotePreview()"/> Lưu lượng gió & Độ ồn</label>
+              <button class="btn btn-sm btn-dark" onclick="document.getElementById('quote-tech-appendix')?.scrollIntoView({behavior:'smooth'})">📐 Xem Bảng Thông Số Phía Dưới ↓</button>
+              <button class="btn btn-sm btn-ice" onclick="resetHiddenAppendixRows()">🔄 Hiện đủ dòng</button>
+              <button class="btn btn-sm btn-outline" onclick="addCustomAppendixRow()">➕ Thêm dòng thông số</button>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-dark" onclick="exportToExcel()">
+              📊 Tải Báo Giá EXCEL (.xlsx)
+            </button>
+            <button class="btn btn-primary" onclick="exportToPDF()">
+              📄 Tải Báo Giá PDF (.pdf)
+            </button>
+            <button class="btn btn-outline" onclick="window.print()">
+              🖨️ In trực tiếp (A4)
+            </button>
+          </div>
+        </div>
+
+        <div id="quote-a4-container"></div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 4: PRO HVAC ENGINEERING SUITE (TCVN 5687:2024 • CAD/PDF AI • DUCT CHECKER • COOLPACK)
+           ==================================================================== -->
+      <section id="view-loadcalc" class="view-panel">
+        <!-- 4-MODULE NAVIGATION BAR -->
+        <div class="hvac-subtabs" id="hvac-subtabs">
+          <button class="hvac-tab-btn active" data-htab="heatload" onclick="switchHvacTab('heatload')">
+            🌡️ 1. Tính Tải Nhiệt TCVN 5687:2024 & AI
+          </button>
+          <button class="hvac-tab-btn" data-htab="takeoff" onclick="switchHvacTab('takeoff')">
+            📄 2. Bóc Tách Bản Vẽ PDF / CAD (.DXF/.DWG)
+          </button>
+          <button class="hvac-tab-btn" data-htab="ductchecker" onclick="switchHvacTab('ductchecker')">
+            🌀 3. Tính Ống Gió Daikin Duct Checker
+          </button>
+          <button class="hvac-tab-btn" data-htab="coolpack" onclick="switchHvacTab('coolpack')">
+            ❄️ 4. CoolPack Gas (R410A/R32) & Ống Đồng
+          </button>
+        </div>
+
+        <!-- ==================== TAB 1: TCVN 5687:2024 HEAT LOAD (2 MODES: OFFLINE MANUAL + AI STUDIO) ==================== -->
+        <div id="htab-heatload" class="hvac-tab-pane active">
+          <!-- 2-MODE SWITCHER (OFFLINE PRIMARY DEFAULT vs AI STUDIO) -->
+          <div class="hv-mode-switch" id="hv-mode-switch">
+            <button type="button" class="hv-mode-btn active" data-hmode="offline" onclick="switchHeatLoadMode('offline')">
+              <span class="hv-mode-icon">🛠️</span>
+              <div>
+                <div class="hv-mode-title">CHẾ ĐỘ OFFLINE — Chọn Thông Số Chi Tiết Từng Phòng & Nhiều Dàn Lạnh</div>
+                <div class="hv-mode-sub">Trọng tâm kỹ sư: chọn địa lý, nhiệt ẩm, tường/kính/cửa chính/cửa sổ, 25 thiết bị, gắn nhiều dàn/phòng & quét CAD/PDF offline</div>
+              </div>
+            </button>
+            <button type="button" class="hv-mode-btn" data-hmode="ai" onclick="switchHeatLoadMode('ai')">
+              <span class="hv-mode-icon">🤖</span>
+              <div>
+                <div class="hv-mode-title">CHẾ ĐỘ AI — Đăng Nhập Model AI, Nhận Diện Bản Vẽ & Tự Tạo Hồ Sơ</div>
+                <div class="hv-mode-sub">Đăng nhập Gemini / ChatGPT / Claude / DeepSeek / OpenRouter / Ollama để AI Vision quét mặt bằng & thẩm định chuyên sâu</div>
+              </div>
+            </button>
+          </div>
+
+          <!-- ==================== MODE 1: OFFLINE DETAILED MANUAL ENGINEERING (DEFAULT) ==================== -->
+          <div id="hv-mode-offline">
+            <!-- Project Climate & System Bar -->
+            <div class="config-card" style="margin-bottom:14px;">
+              <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <span>📐 1. CƠ SỞ KHÍ HẬU & THÔNG SỐ THIẾT KẾ CHUNG (TCVN 5687:2024 & QCVN 09:2017/BXD)</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-sm btn-glass" onclick="exportHvacReportPDF()">📄 Xuất Báo Cáo Nhiệt PDF</button>
+                  <button class="btn btn-sm btn-glass" onclick="exportHvacReportExcel()">📊 Xuất Excel (Công thức sống)</button>
+                  <button class="btn btn-sm btn-glass" style="font-weight:700;" onclick="pushHvacEquipmentToCart()">🛒 Đẩy Toàn Bộ Dàn Sang Giỏ Báo Giá</button>
+                </div>
+              </div>
+              <div class="config-card-body">
+                <div style="display:grid;grid-template-columns:1.6fr 1.1fr 0.65fr 0.65fr;gap:10px;align-items:end;">
+                  <div class="form-group">
+                    <label>Khu vực địa lý / Trạm khí hậu (15 trạm chuẩn Bảng C.1 TCVN 5687:2024)</label>
+                    <select id="hv-city" onchange="onCityOrGradeChange()"></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Cấp thiết kế điều hòa (TCVN 5687)</label>
+                    <select id="hv-grade" onchange="onCityOrGradeChange()">
+                      <option value="I" selected>Cấp I (Pc = 0.4% — Biệt thự / Cao cấp / BV)</option>
+                      <option value="1%">Mức 1.0% (Văn phòng / Thương mại)</option>
+                      <option value="II">Cấp II (Pc = 2.0% — Dân dụng phổ thông)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>t_khô ngoài (°C)</label>
+                    <input type="number" id="hv-tout" step="0.1" value="35.4" onchange="onCustomOutdoorTempChange()" />
+                  </div>
+                  <div class="form-group">
+                    <label>t_ướt ngoài (°C)</label>
+                    <input type="number" id="hv-twbout" step="0.1" value="28.0" onchange="onCustomOutdoorTempChange()" />
+                  </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:0.8fr 0.8fr 1.4fr 1fr 0.7fr;gap:10px;align-items:end;">
+                  <div class="form-group">
+                    <label>Hệ số dự phòng (%)</label>
+                    <input type="number" id="hv-safety" value="10" min="0" max="30" step="1" onchange="recalcProjectHeatLoad()" />
+                  </div>
+                  <div class="form-group">
+                    <label>Hệ số đồng thời</label>
+                    <input type="number" id="hv-diversity" value="0.85" min="0.5" max="1.0" step="0.05" onchange="recalcProjectHeatLoad()" />
+                  </div>
+                  <div class="form-group">
+                    <label>Hệ thống dàn lạnh Daikin mặc định</label>
+                    <select id="hv-system" onchange="recalcProjectHeatLoad()">
+                      <option value="VRV_DUCT">VRV Giấu trần nối ống gió</option>
+                      <option value="VRV_CASSETTE">VRV Cassette âm trần</option>
+                      <option value="VRV_WALL">VRV Treo tường</option>
+                      <option value="MULTI_DUCT">Super Multi NX Giấu trần</option>
+                      <option value="MULTI_WALL">Super Multi NX Treo tường</option>
+                      <option value="SKY_DUCT">SkyAir Giấu trần nối ống gió</option>
+                      <option value="SKY_CASSETTE">SkyAir Cassette âm trần</option>
+                      <option value="ROOM_AIR">Dân dụng Treo tường FTHF</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="padding-bottom:6px;">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#005A8D;font-weight:700;">
+                      <input type="checkbox" id="hv-use-hrv" checked onchange="recalcProjectHeatLoad()" />
+                      Thu hồi nhiệt gió tươi HRV
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label>Hiệu suất HRV (%)</label>
+                    <input type="number" id="hv-hrv-eff" value="70" min="30" max="90" step="5" onchange="recalcProjectHeatLoad()" />
+                  </div>
+                </div>
+
+                <div id="hv-climate-strip" class="hvac-climate-strip"></div>
+
+                <!-- DIRECT OFFLINE FLOOR PLAN SCANNER STRIP -->
+                <div style="padding:10px 12px;background:#F8FAFC;border:1.5px dashed #005A8D;border-radius:9px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                    <div>
+                      <div style="font-weight:700;font-size:12.5px;color:#005A8D;">📐 Quét Mặt Bằng Bản Vẽ Offline (PDF Vector / AutoCAD .DXF / .DWG)</div>
+                      <div id="hv-off-tk-label" style="font-size:11.5px;color:#475569;">Tải bản vẽ trực tiếp để đọc diện tích & danh sách phòng Offline (hoặc chuyển sang Chế độ AI để dùng AI Vision đọc bản vẽ scan/ảnh).</div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                      <label class="btn btn-sm btn-dark" style="cursor:pointer;">
+                        📂 Tải Bản Vẽ (PDF / DXF / DWG)
+                        <input type="file" accept=".pdf,.dxf,.dwg,.png,.jpg,.jpeg" style="display:none;" onchange="handleDrawingFileSelect(event, false)" />
+                      </label>
+                      <button type="button" class="btn btn-sm btn-outline" onclick="switchHvacTab('takeoff')">🖼️ Mở Trình Xem Bản Vẽ Đầy Đủ</button>
+                    </div>
+                  </div>
+                  <div id="hv-off-tk-status" style="font-size:11.8px;color:#005A8D;margin-top:4px;"></div>
+                  <div id="hv-off-tk-summary"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KPI CARDS -->
+            <div id="hv-kpi-grid" class="hvac-kpi-grid"></div>
+
+            <!-- BREAKDOWN CHART + ALERTS -->
+            <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:14px;margin-bottom:14px;">
+              <div class="config-card">
+                <div class="config-card-head" style="background:var(--grad-daikin);">📊 Cơ Cấu Nguồn Nhiệt Công Trình (Phân Tích CLTD/CLF)</div>
+                <div class="config-card-body" id="hv-breakdown-chart"></div>
+              </div>
+              <div class="config-card">
+                <div class="config-card-head" style="background:var(--grad-daikin);">🛡️ Thẩm Định QCVN 09:2017/BXD & Khoảng Hở Trần (H_BT − H_TC)</div>
+                <div class="config-card-body" id="hv-alerts-box"></div>
+              </div>
+            </div>
+
+            <!-- MULTI-ROOM & MULTI-INDOOR-UNIT TABLE -->
+            <div class="config-card" style="margin-bottom:14px;">
+              <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <span>🏢 2. BẢNG TÍNH TẢI NHIỆT CHI TIẾT TỪNG PHÒNG & CHỌN NHIỀU DÀN LẠNH DAIKIN</span>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <button class="btn btn-sm btn-glass" style="font-weight:700;" onclick="openRoomEditorModal(-1, false)">➕ Thêm phòng mới</button>
+                  <button class="btn btn-sm btn-glass" onclick="loadSamplePresetProject('HOME')">🏠 Mẫu Gia đình</button>
+                  <button class="btn btn-sm btn-glass" onclick="loadSamplePresetProject('OFFICE')">🏢 Mẫu Văn phòng</button>
+                  <button class="btn btn-sm btn-glass" onclick="loadSamplePresetProject('HOSPITAL')">🏥 Mẫu Bệnh viện</button>
+                </div>
+              </div>
+              <div class="data-table-wrap" style="border:none;border-radius:0;">
+                <table class="clean-table">
+                  <thead>
+                    <tr>
+                      <th style="width:34px;text-align:center;">STT</th>
+                      <th>Phòng / Nhiệt độ / Tường, Cửa Sổ, Cửa Chính & Thiết Bị</th>
+                      <th style="width:64px;text-align:center;">Diện tích</th>
+                      <th style="width:84px;text-align:center;">Cao BT / TC</th>
+                      <th style="width:48px;text-align:center;">Hướng</th>
+                      <th style="width:82px;text-align:right;">Hiện / Ẩn (kW)</th>
+                      <th style="width:94px;text-align:right;">Tổng tải lạnh</th>
+                      <th style="width:88px;text-align:center;">W/m² & OA</th>
+                      <th>Dàn Lạnh Đã Chọn (1 hoặc Nhiều Dàn)</th>
+                      <th style="width:155px;text-align:center;">Sửa phòng / Chọn dàn</th>
+                    </tr>
+                  </thead>
+                  <tbody id="hv-rooms-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- OFFLINE EXPERT TECHNICAL SUMMARY & EXPORT -->
+            <div class="config-card">
+              <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <span>📋 3. BÁO CÁO KỸ THUẬT TỔNG HỢP (TCVN 5687:2024) & XUẤT HỒ SƠ RIÊNG BIỆT</span>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                  <span id="hvac-ai-mode-pill" style="padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid #CBD5E1;background:#FFFFFF;color:#334155;">🧠 Offline Expert</span>
+                  <button id="btn-run-ai-report" class="btn btn-sm btn-glass" style="font-weight:700;" onclick="runAiThermalAnalysis()">🔄 Cập Nhật Phân Tích Kỹ Thuật</button>
+                  <button class="btn btn-sm btn-glass" onclick="switchHeatLoadMode('ai')">🤖 Chuyển Chế Độ AI →</button>
+                </div>
+              </div>
+              <div class="config-card-body">
+                <pre id="hv-ai-report-text" class="hvac-ai-pre">Đang khởi tạo phân tích kỹ thuật...</pre>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+                  <button class="btn btn-dark" onclick="exportHvacReportExcel()">📊 Xuất Bảng Tính Excel (.xlsx Công thức sống)</button>
+                  <button class="btn btn-primary" onclick="exportHvacReportPDF()">📄 Xuất Báo Cáo Kỹ Thuật PDF Riêng Biệt (.pdf)</button>
+                  <button class="btn btn-ice" onclick="pushHvacEquipmentToCart()">🛒 Đẩy Toàn Bộ Dàn Lạnh & Dàn Nóng Sang Giỏ Báo Giá →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== MODE 2: DEDICATED AI STUDIO MODE ==================== -->
+          <div id="hv-mode-ai" style="display:none;">
+            <!-- AI CARD 1: MULTI-PROVIDER AI LOGIN & MODEL SELECTION -->
+            <div class="config-card" style="margin-bottom:14px;">
+              <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <span>🔐 1. ĐĂNG NHẬP TÀI KHOẢN & CHỌN MODEL AI (GEMINI • CHATGPT • CLAUDE • DEEPSEEK • OPENROUTER • OLLAMA)</span>
+                <span id="hvac-ai-top-pill" style="padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid #CBD5E1;background:#FFFFFF;color:#334155;">🧠 Offline Expert</span>
+              </div>
+              <div class="config-card-body" id="hv-ai-inline-login"></div>
+            </div>
+
+            <!-- AI CARD 2: AI VISION DRAWING RECOGNITION -->
+            <div class="config-card" style="margin-bottom:14px;">
+              <div class="config-card-head" style="background:var(--grad-daikin);">👁️ 2. AI VISION NHẬN DIỆN BẢN VẼ MẶT BẰNG (PDF SCAN • ẢNH MẶT BẰNG PNG/JPG • CAD)</div>
+              <div class="config-card-body">
+                <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:start;">
+                  <div>
+                    <div class="hvac-dropzone">
+                      <div style="font-weight:700;font-size:13.5px;color:#0F172A;">Tải bản vẽ mặt bằng để Model AI đã đăng nhập tự nhận diện</div>
+                      <div id="hv-ai-tk-label" style="font-size:12px;color:#475569;margin:4px 0 10px;">AI Vision sẽ đọc tên phòng, diện tích, hướng, số cửa sổ/cửa chính trực tiếp từ ảnh mặt bằng hoặc file PDF!</div>
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <label class="btn btn-primary" style="cursor:pointer;">
+                          📂 Chọn Bản Vẽ & Quét AI Vision Ngay
+                          <input type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.dxf,.dwg" style="display:none;" onchange="handleDrawingFileSelect(event, true)" />
+                        </label>
+                        <button type="button" class="btn btn-dark" onclick="runDrawingTakeoff(true)">🤖 Chạy Lại AI Vision</button>
+                      </div>
+                    </div>
+                    <div id="hv-ai-tk-status" style="font-size:12px;color:#005A8D;margin-top:8px;font-weight:600;"></div>
+                    <div id="hv-ai-tk-summary"></div>
+                  </div>
+                  <div id="hv-ai-tk-preview" style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:9px;min-height:190px;display:flex;align-items:center;justify-content:center;padding:8px;">
+                    <div style="text-align:center;color:#64748B;font-size:12px;">Xem trước mặt bằng bản vẽ sẽ hiển thị tại đây.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI CARD 3: AI GENERATE FULL ROOMS & APPLIANCES FROM TEXT -->
+            <div class="config-card" style="margin-bottom:14px;">
+              <div class="config-card-head" style="background:var(--grad-daikin);">✨ 3. AI TỰ TẠO BẢNG PHÒNG, CỬA SỔ, CỬA CHÍNH & THIẾT BỊ TỪ MÔ TẢ</div>
+              <div class="config-card-body">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                  <select id="hv-ai-domain" class="select-ctrl" style="min-width:185px;">
+                    <option value="AUTO">✨ Tự nhận diện công trình</option>
+                    <option value="HOME">🏠 Gia đình / Biệt thự</option>
+                    <option value="OFFICE">🏢 Văn phòng làm việc</option>
+                    <option value="HOSPITAL">🏥 Bệnh viện / Phòng khám</option>
+                  </select>
+                  <input type="text" id="hv-ai-prompt" class="select-ctrl" style="flex:1;min-width:260px;" placeholder="Nhập mô tả dự án (VD: Biệt thự 3 tầng Hà Nội 140m2, phòng khách lớn cần 2 dàn lạnh, 1 bếp từ, 3 phòng ngủ... hoặc Phòng khám 200m2 có siêu âm, nha khoa, phòng mổ...)" />
+                  <button id="btn-ai-gen-rooms" class="btn btn-primary" onclick="runAiGenerateRooms().then(()=>switchHeatLoadMode('offline'))">✨ AI Tạo Công Trình & Mở Bảng Tính →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI CARD 4: RUN AI DEEP ENGINEERING REPORT -->
+            <div class="config-card">
+              <div class="config-card-head">📝 4. AI THẨM ĐỊNH & VIẾT BÁO CÁO KỸ THUẬT CHUYÊN SÂU</div>
+              <div class="config-card-body" style="flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+                <div style="font-size:12.5px;color:#334155;">Dùng Model AI đã đăng nhập để phân tích sâu kết quả tải nhiệt hiện tại, đánh giá QCVN 09:2017/BXD, tối ưu dàn lạnh Daikin và gắn trực tiếp vào Báo cáo PDF/Excel.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="btn btn-primary" onclick="runAiThermalAnalysis().then(()=>switchHeatLoadMode('offline'))">🤖 Chạy AI Thẩm Định & Xem Kết Quả →</button>
+                  <button class="btn btn-outline" onclick="switchHeatLoadMode('offline')">← Quay về Chế Độ Offline (Chọn Thông Số Từng Phòng)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== TAB 2: PDF / CAD (.DXF/.DWG) + AI VISION TAKEOFF ==================== -->
+        <div id="htab-takeoff" class="hvac-tab-pane">
+          <div class="config-card" style="margin-bottom:14px;">
+            <div class="config-card-head">📄 TẢI BẢN VẼ KIẾN TRÚC (PDF • AUTOCAD .DXF / .DWG • ẢNH MẶT BẰNG) ĐỂ BÓC TÁCH PHÒNG TỰ ĐỘNG</div>
+            <div class="config-card-body">
+              <div class="hvac-dropzone">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;">
+                  <div>
+                    <div style="font-weight:700;font-size:14px;color:#0F172A;">Chọn file bản vẽ từ máy tính (.PDF, .DXF, .DWG, .PNG, .JPG)</div>
+                    <div id="tk-file-label" style="font-size:12px;color:#475569;margin-top:3px;">
+                      Hỗ trợ đọc Offline trực tiếp file AutoCAD .DXF (vùng kín Polyline & nhãn chữ), .DWG (tự động đổi qua AutoCAD nếu cài sẵn), PDF Vector & AI Vision (Gemini/OpenAI) đọc ảnh mặt bằng!
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <label class="btn btn-primary" style="cursor:pointer;">
+                      📂 Chọn File Bản Vẽ
+                      <input type="file" accept=".pdf,.dxf,.dwg,.png,.jpg,.jpeg,.webp" style="display:none;" onchange="handleDrawingFileSelect(event)" />
+                    </label>
+                    <button class="btn btn-dark" onclick="runDrawingTakeoff(false)">🔍 Bóc Tách Offline</button>
+                    <button class="btn btn-ice" onclick="runDrawingTakeoff(true)">🤖 AI Vision Quét Mặt Bằng</button>
+                    <button class="btn btn-outline" onclick="openAiLoginModal()">🔐 Đăng Nhập Model AI</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                  <span id="tk-ai-status-pill" style="padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid #CBD5E1;background:#F8FAFC;color:#334155;">🧠 Offline</span>
+                  <div id="tk-status-box" style="font-size:12.5px;color:#005A8D;font-weight:600;">Sẵn sàng tiếp nhận bản vẽ mặt bằng kiến trúc (PDF / CAD DXF / DWG / Ảnh).</div>
+                </div>
+                <div id="tk-pdf-pager" style="display:none;align-items:center;gap:8px;">
+                  <button class="btn btn-sm btn-outline" onclick="stepTakeoffPage(-1)">◀ Trang trước</button>
+                  <span id="tk-page-ind" style="font-weight:700;font-size:12px;">Trang 1 / 1</span>
+                  <button class="btn btn-sm btn-outline" onclick="stepTakeoffPage(1)">Trang sau ▶</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:14px;align-items:start;">
+            <div class="config-card">
+              <div class="config-card-head" style="background:var(--grad-daikin);">🖼️ Xem Trước Mặt Bằng Bản Vẽ</div>
+              <div class="config-card-body" id="tk-preview-stage" style="min-height:360px;display:flex;align-items:center;justify-content:center;background:#F8FAFC;">
+                <div style="text-align:center;color:#64748B;font-size:13px;">Chưa tải bản vẽ nào. Chọn file PDF, DXF, DWG hoặc ảnh PNG/JPG ở phía trên.</div>
+              </div>
+            </div>
+
+            <div class="config-card">
+              <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+                <span>📋 Danh Sách Phòng Đã Bóc Tách (Chỉnh Sửa Trước Khi Tính Nhiệt)</span>
+                <button class="btn btn-sm btn-glass" onclick="addManualTakeoffRow()">➕ Thêm dòng</button>
+              </div>
+              <div class="data-table-wrap" style="border:none;border-radius:0;max-height:380px;overflow-y:auto;">
+                <table class="clean-table">
+                  <thead>
+                    <tr>
+                      <th>Tên phòng</th>
+                      <th>Tầng</th>
+                      <th>DT (m²)</th>
+                      <th>H_BT (m)</th>
+                      <th>H_TC (m)</th>
+                      <th>Nguồn</th>
+                      <th>Xóa</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tk-rooms-tbody">
+                    <tr><td colspan="7" style="text-align:center;padding:24px;color:#64748B;">Tải bản vẽ lên để tự động bóc tách danh sách phòng và diện tích.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="config-card-body" style="border-top:1px solid #E2E8F0;flex-direction:row;justify-content:flex-end;flex-wrap:wrap;">
+                <button class="btn btn-outline" onclick="importTakeoffRoomsToHeatLoad(false)">➕ Nối thêm vào Bảng Tính Nhiệt</button>
+                <button class="btn btn-primary" onclick="importTakeoffRoomsToHeatLoad(true)">📥 Thay Thế & Tính Tải Nhiệt Ngay →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== TAB 3: DAIKIN DUCT CHECKER ==================== -->
+        <div id="htab-ductchecker" class="hvac-tab-pane">
+          <div class="builder-grid" style="grid-template-columns:380px 1fr;">
+            <div class="config-card">
+              <div class="config-card-head">🌀 CHỌN MODEL DAIKIN & THÔNG SỐ TUYẾN ỐNG GIÓ</div>
+              <div class="config-card-body">
+                <div class="form-group">
+                  <label>Chọn dàn lạnh nối ống gió Daikin (tự điền Lưu lượng, ESP & Côn Excel)</label>
+                  <select id="dc-model" onchange="onDuctModelSelect()"></select>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                  <div class="form-group"><label>Lưu lượng (m³/h)</label><input type="number" id="dc-airflow" value="1260" min="100" oninput="runDuctCheckerCalc()" /></div>
+                  <div class="form-group"><label>ESP ĐM (Pa)</label><input type="number" id="dc-esp-rated" value="50" min="10" oninput="runDuctCheckerCalc()" /></div>
+                  <div class="form-group"><label>ESP Max (Pa)</label><input type="number" id="dc-esp-max" value="150" min="10" oninput="runDuctCheckerCalc()" /></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div class="form-group"><label>Số miệng gió cấp (nhánh)</label><input type="number" id="dc-branches" value="3" min="1" max="12" oninput="runDuctCheckerCalc()" /></div>
+                  <div class="form-group"><label>Chiều cao ống tối đa (mm)</label>
+                    <select id="dc-max-h" onchange="runDuctCheckerCalc()">
+                      <option value="150">150 mm (Trần rất thấp)</option>
+                      <option value="200">200 mm (Trần thấp)</option>
+                      <option value="250" selected>250 mm (Tiêu chuẩn)</option>
+                      <option value="300">300 mm (Trần cao)</option>
+                      <option value="400">400 mm (Sảnh lớn)</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div class="form-group"><label>Dài ống chính (m)</label><input type="number" id="dc-main-len" value="6.0" step="0.5" min="0" oninput="runDuctCheckerCalc()" /></div>
+                  <div class="form-group"><label>Dài ống nhánh cứng (m)</label><input type="number" id="dc-branch-len" value="3.5" step="0.5" min="0" oninput="runDuctCheckerCalc()" /></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div class="form-group"><label>Dài ống mềm mỗi nhánh (m)</label><input type="number" id="dc-flex-len" value="2.0" step="0.5" min="0" oninput="runDuctCheckerCalc()" /></div>
+                  <div class="form-group"><label>Dài ống gió hồi (m)</label><input type="number" id="dc-return-len" value="3.0" step="0.5" min="0" oninput="runDuctCheckerCalc()" /></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div class="form-group"><label>Số cút 90° tuyến xa nhất</label><input type="number" id="dc-elbows" value="2" min="0" max="10" oninput="runDuctCheckerCalc()" /></div>
+                  <div class="form-group"><label>Ma sát mục tiêu (Pa/m)</label>
+                    <select id="dc-target-dp" onchange="runDuctCheckerCalc()">
+                      <option value="0.8">0.8 Pa/m (Siêu êm — Phòng ngủ)</option>
+                      <option value="1.0" selected>1.0 Pa/m (Tiêu chuẩn ASHRAE)</option>
+                      <option value="1.2">1.2 Pa/m (Tối ưu tiết diện)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="dc-results-panel"></div>
+          </div>
+        </div>
+
+        <!-- ==================== TAB 4: COOLPACK R410A / R32 & DAIKIN PIPING ==================== -->
+        <div id="htab-coolpack" class="hvac-tab-pane">
+          <div class="config-card" style="margin-bottom:14px;">
+            <div class="config-card-head">❄️ THÔNG SỐ ĐO KIỂM CHU TRÌNH LẠNH (COOLPACK SUPERHEAT / SUBCOOLING) & ĐƯỜNG ỐNG ĐỒNG DAIKIN</div>
+            <div class="config-card-body">
+              <div style="display:grid;grid-template-columns:1.8fr 0.7fr 0.7fr;gap:10px;">
+                <div class="form-group">
+                  <label>Chọn nhanh Model Dàn Nóng / SkyAir Daikin để tự điền công suất & cỡ ống lỏng</label>
+                  <select id="cp-model-preset" onchange="onCoolpackModelSelect()"></select>
+                </div>
+                <div class="form-group">
+                  <label>Môi chất lạnh (Gas)</label>
+                  <select id="cp-ref" onchange="runCoolpackCalc()">
+                    <option value="R410A" selected>Gas R410A (VRV H / A / IV-S)</option>
+                    <option value="R32">Gas R32 (SkyAir / Multi / FTHF)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Đơn vị áp kế</label>
+                  <select id="cp-punit" onchange="runCoolpackCalc()">
+                    <option value="bar" selected>bar (gauge)</option>
+                    <option value="psi">psi (gauge)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:#EFF6FF;padding:10px 12px;border-radius:8px;border:1px solid #BFDBFE;">
+                <div class="form-group"><label>Áp suất hút (Low P)</label><input type="number" id="cp-psuc" value="8.6" step="0.1" oninput="runCoolpackCalc()" /></div>
+                <div class="form-group"><label>Nhiệt độ ống hút đo (°C)</label><input type="number" id="cp-tsuc" value="13.0" step="0.5" oninput="runCoolpackCalc()" /></div>
+                <div class="form-group"><label>Áp suất đẩy (High P)</label><input type="number" id="cp-pdis" value="27.8" step="0.2" oninput="runCoolpackCalc()" /></div>
+                <div class="form-group"><label>Nhiệt độ ống lỏng đo (°C)</label><input type="number" id="cp-tliq" value="40.5" step="0.5" oninput="runCoolpackCalc()" /></div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">
+                <div class="form-group"><label>Công suất định mức (kW)</label><input type="number" id="cp-rated-kw" value="40.0" step="0.5" oninput="runCoolpackCalc()" /></div>
+                <div class="form-group"><label>Tổng dài ống tương đương (m)</label><input type="number" id="cp-len" value="38" min="5" oninput="runCoolpackCalc()" /></div>
+                <div class="form-group"><label>Chênh cao dàn nóng–lạnh (m)</label><input type="number" id="cp-height" value="12" min="0" oninput="runCoolpackCalc()" /></div>
+                <div class="form-group"><label>Đường kính ống lỏng (mm)</label>
+                  <select id="cp-liq-od" onchange="runCoolpackCalc()">
+                    <option value="6.4">Ø6.4 mm (0.022 kg/m)</option>
+                    <option value="9.5">Ø9.5 mm (0.059 kg/m)</option>
+                    <option value="12.7" selected>Ø12.7 mm (0.120 kg/m)</option>
+                    <option value="15.9">Ø15.9 mm (0.170 kg/m)</option>
+                    <option value="19.1">Ø19.1 mm (0.250 kg/m)</option>
+                  </select>
+                </div>
+                <div class="form-group"><label>Chiều dài nạp sẵn gas (m)</label><input type="number" id="cp-precharge" value="0" min="0" oninput="runCoolpackCalc()" /></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="cp-results-panel"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 5: VIETNAMESE PDF CATALOGUE LIBRARY
+           ==================================================================== -->
+      <section id="view-library" class="view-panel">
+        <div class="config-card">
+          <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>📚 Thư Viện 15 Tài Liệu Catalogue Thương Mại & Kỹ Thuật Daikin Trong Thư Mục</span>
+            <button class="btn btn-sm btn-glass" onclick="openExternalLink('https://www.daikincatalog.com/library/site/vietnam/book-lists/')">
+              🌐 Mở DaikinCatalog.com (Book Lists Vietnam)
+            </button>
+          </div>
+          <div class="config-card-body">
+            <div id="library-grid" class="product-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VIEW 6: MASTER BASE PRICE EDITOR & COMPANY / VIETQR SETTINGS
+           ==================================================================== -->
+      <section id="view-admin" class="view-panel">
+        <!-- MASTER INPUT BASE PRICE MANAGEMENT CARD -->
+        <div class="config-card" style="margin-bottom:20px;">
+          <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <span>💰 BẢNG QUẢN LÝ & CHỈNH SỬA GIÁ GỐC ĐẦU VÀO (THIẾT BỊ DAIKIN & VẬT TƯ / NHÂN CÔNG)</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-sm btn-glass" onclick="syncMasterPricesToActiveCart()">🔄 Áp dụng Giá gốc mới vào Giỏ hàng đang mở</button>
+              <button class="btn btn-sm btn-glass" onclick="openAddModelModal()">➕ Thêm Model mới</button>
+              <button class="btn btn-sm btn-glass" onclick="promptAddMasterMaterial()">➕ Thêm Vật tư / NC gốc</button>
+              <button class="btn btn-sm btn-outline" onclick="resetAllBasePricesToDefault()">↩️ Khôi phục giá mặc định</button>
+            </div>
+          </div>
+          <div class="config-card-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary btn-sm" id="adm-tab-equip" onclick="switchAdminPriceTab('equip')">
+                  💎 Giá Gốc Thiết Bị Daikin (207 mã)
+                </button>
+                <button class="btn btn-outline btn-sm" id="adm-tab-mat" onclick="switchAdminPriceTab('mat')">
+                  🛠️ Giá Gốc Vật Tư & Nhân Công (105 mục)
+                </button>
+              </div>
+              <div style="display:flex;gap:8px;flex:1;max-width:620px;">
+                <input type="text" id="adm-price-search" class="select-ctrl" style="flex:1;" placeholder="Gõ mã Model hoặc tên vật tư / nhân công cần sửa giá gốc..." oninput="renderAdminBasePriceTable()" />
+                <select id="adm-price-group" class="select-ctrl" onchange="renderAdminBasePriceTable()">
+                  <option value="ALL">Tất cả nhóm mục lục</option>
+                </select>
+              </div>
+            </div>
+            <div style="font-size:12px;color:#0F172A;background:#F8FAFC;border:1px solid #CBD5E1;border-left:4px solid #005A8D;padding:8px 12px;border-radius:8px;">
+              💡 <strong>Hướng dẫn:</strong> Nhập trực tiếp <strong>Đơn giá gốc đầu vào (VNĐ)</strong> vào ô số bên dưới (hệ thống tự động lưu ngay vào bộ nhớ máy). Khi lập báo giá ở Giỏ hàng, <strong>Đơn giá báo khách = Giá gốc đầu vào × Hệ số nhân</strong>.
+            </div>
+            <div class="data-table-wrap" style="max-height:430px;overflow-y:auto;">
+              <table class="clean-table">
+                <thead id="adm-price-thead"></thead>
+                <tbody id="adm-price-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="builder-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="config-card">
+            <div class="config-card-head">🏢 Thông Tin Pháp Lý Công Ty Minh Phú (Hiển thị trên Báo Giá)</div>
+            <div class="config-card-body">
+              <div class="form-group">
+                <label>Tên công ty đầy đủ</label>
+                <input type="text" id="set-comp-name" />
+              </div>
+              <div class="form-group">
+                <label>Tên tiếng Anh / Phụ đề</label>
+                <input type="text" id="set-comp-en" />
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="form-group">
+                  <label>Mã số thuế</label>
+                  <input type="text" id="set-comp-tax" />
+                </div>
+                <div class="form-group">
+                  <label>Hotline kinh doanh</label>
+                  <input type="text" id="set-comp-hotline" />
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="form-group">
+                  <label>Người đại diện</label>
+                  <input type="text" id="set-comp-rep" />
+                </div>
+                <div class="form-group">
+                  <label>Website</label>
+                  <input type="text" id="set-comp-web" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Địa chỉ trụ sở / Văn phòng</label>
+                <input type="text" id="set-comp-addr" />
+              </div>
+              <div class="form-group">
+                <label>Email liên hệ</label>
+                <input type="text" id="set-comp-email" />
+              </div>
+              <div class="form-group">
+                <label>Điều khoản thương mại mặc định (mỗi dòng 1 mục)</label>
+                <textarea id="set-comp-terms" rows="5"></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="saveCompanySettings()">💾 Lưu Thông Tin Công Ty</button>
+            </div>
+          </div>
+
+          <div class="config-card">
+            <div class="config-card-head">💳 Cấu Hình Mã QR Thanh Toán Đơn Hàng (Napas VietQR / Ảnh QR)</div>
+            <div class="config-card-body">
+              <div class="form-group">
+                <label>Ngân hàng thụ hưởng (Chuẩn Napas VietQR)</label>
+                <select id="set-bank-id" onchange="previewSettingsQR()">
+                  <option value="MB">MBBank - Ngân hàng TMCP Quân Đội</option>
+                  <option value="VCB">Vietcombank - Ngân hàng TMCP Ngoại Thương VN</option>
+                  <option value="TCB">Techcombank - Ngân hàng TMCP Kỹ Thương VN</option>
+                  <option value="CTG">VietinBank - Ngân hàng TMCP Công Thương VN</option>
+                  <option value="BIDV">BIDV - Ngân hàng TMCP Đầu Tư & Phát Triển VN</option>
+                  <option value="ACB">ACB - Ngân hàng TMCP Á Châu</option>
+                  <option value="VPB">VPBank - Ngân hàng TMCP Việt Nam Thịnh Vượng</option>
+                  <option value="TPB">TPBank - Ngân hàng TMCP Tiên Phong</option>
+                  <option value="VBA">Agribank - NH Nông Nghiệp & PTNT VN</option>
+                  <option value="STB">Sacombank - Ngân hàng TMCP Sài Gòn Thương Tín</option>
+                  <option value="HDB">HDBank - Ngân hàng TMCP Phát Triển TP.HCM</option>
+                  <option value="SHB">SHB - Ngân hàng TMCP Sài Gòn - Hà Nội</option>
+                </select>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="form-group">
+                  <label>Số tài khoản ngân hàng</label>
+                  <input type="text" id="set-bank-acc" oninput="previewSettingsQR()" />
+                </div>
+                <div class="form-group">
+                  <label>Tên chủ tài khoản (Không dấu)</label>
+                  <input type="text" id="set-bank-holder" oninput="previewSettingsQR()" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Nội dung chuyển khoản mặc định</label>
+                <input type="text" id="set-bank-prefix" oninput="previewSettingsQR()" />
+              </div>
+              <div class="form-group">
+                <label>Hoặc tải ảnh QR Ngân hàng tĩnh có sẵn từ máy (.png / .jpg)</label>
+                <input type="file" accept="image/*" onchange="handleCustomQRUpload(event)" />
+                <button class="btn btn-sm btn-outline" style="margin-top:6px;" onclick="clearCustomQR()">Sử dụng lại VietQR tự động theo số tiền</button>
+              </div>
+
+              <div class="qr-payment-card" style="margin-top:6px;">
+                <div class="qr-card-head">XEM TRƯỚC MÃ VIETQR THANH TOÁN ĐƠN HÀNG</div>
+                <div class="qr-card-body">
+                  <div class="qr-img-box">
+                    <img id="settings-qr-preview" src="" alt="QR Preview" />
+                  </div>
+                  <div class="qr-meta">
+                    <h4>Thông Tin Chuyển Khoản</h4>
+                    <p id="settings-qr-desc"></p>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;margin-top:6px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="saveCompanySettings()">💾 Lưu Cấu Hình VietQR</button>
+                <button class="btn btn-outline" onclick="openAddModelModal()">➕ Thêm Model Mới Vào Kho</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HYBRID AI ENGINE SETTINGS CARD -->
+        <div class="config-card" style="margin-top:20px;">
+          <div class="config-card-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <span>🤖 TRUNG TÂM ĐĂNG NHẬP & CẤU HÌNH MODEL AI (GEMINI • CHATGPT • CLAUDE • DEEPSEEK • OPENROUTER • OLLAMA)</span>
+            <button class="btn btn-sm btn-glass" style="font-weight:700;" onclick="openAiLoginModal()">🔐 Mở Cửa Sổ Đăng Nhập & Chọn Model AI</button>
+          </div>
+          <div class="config-card-body">
+            <div style="display:grid;grid-template-columns:1.2fr 1.6fr 1fr auto;gap:10px;align-items:end;">
+              <div class="form-group">
+                <label>Nhà cung cấp Model AI</label>
+                <select id="set-ai-provider" onchange="onAiProviderChange(false)">
+                  <option value="offline">🛡️ Chuyên gia Offline Minh Phú (Miễn phí)</option>
+                  <option value="gemini">✨ Google Gemini (AI Studio — Khuyên dùng)</option>
+                  <option value="openai">🚀 OpenAI (ChatGPT / GPT-4o)</option>
+                  <option value="claude">🧠 Anthropic Claude (3.5 / 3.7 Sonnet)</option>
+                  <option value="deepseek">⚡ DeepSeek AI (V3 / Reasoner)</option>
+                  <option value="openrouter">🌐 OpenRouter (Đa Model AI)</option>
+                  <option value="ollama">💻 Ollama (AI nội bộ trên máy)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>API Key / Token đăng nhập (Lưu cục bộ bảo mật)</label>
+                <input type="password" id="set-ai-key" placeholder="Nhập API Key hoặc bấm nút 'Mở Cửa Sổ Đăng Nhập AI' ở góc phải" />
+              </div>
+              <div class="form-group">
+                <label>Tên Model AI</label>
+                <input type="text" id="set-ai-model" value="gemini-2.5-flash" />
+              </div>
+              <button class="btn btn-primary" onclick="saveAiSettingsFromAdmin()">💾 Lưu & Kích Hoạt</button>
+            </div>
+            <div id="ai-provider-hint" style="font-size:12px;color:#0F172A;background:#F8FAFC;border:1px solid #CBD5E1;border-left:4px solid #005A8D;padding:8px 12px;border-radius:8px;">
+              ✅ Hỗ trợ đăng nhập đa tài khoản AI cùng lúc (Google Gemini, ChatGPT, Claude, DeepSeek, OpenRouter, Ollama cục bộ) & tải danh sách Model trực tiếp từ tài khoản.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 1: PRODUCT TECHNICAL SPEC & DUCT PLENUM CAD VIEWER
+       ====================================================================== -->
+  <div id="product-modal" class="modal-backdrop" onclick="if(event.target===this)closeModal('product-modal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="pm-title">Chi Tiết Thông Số Kỹ Thuật & Côn Đầu Máy</h3>
+        <button class="modal-close" onclick="closeModal('product-modal')">✕</button>
+      </div>
+      <div class="modal-body" id="pm-body"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 2: BUILT-IN PDF CATALOGUE PAGE VIEWER
+       ====================================================================== -->
+  <div id="pdf-modal" class="modal-backdrop" onclick="if(event.target===this)closeModal('pdf-modal')">
+    <div class="modal-card" style="max-width:1080px;">
+      <div class="modal-header">
+        <h3 id="pdfm-title">Catalogue Tiếng Việt Daikin</h3>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn btn-sm btn-glass" onclick="stepPdfPage(-1)">◀ Trang trước</button>
+          <span id="pdfm-page-indicator" style="font-size:12.5px;font-weight:700;">Trang 1</span>
+          <button class="btn btn-sm btn-glass" onclick="stepPdfPage(1)">Trang sau ▶</button>
+          <button class="btn btn-sm btn-primary" onclick="openCurrentPdfExternal()">📂 Mở file PDF gốc</button>
+          <button class="modal-close" onclick="closeModal('pdf-modal')">✕</button>
+        </div>
+      </div>
+      <div class="modal-body" id="pdfm-body" style="background:#1E293B;text-align:center;min-height:520px;"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 3: MATERIAL / LABOR CATALOG PICKER
+       ====================================================================== -->
+  <div id="mat-modal" class="modal-backdrop" onclick="if(event.target===this)closeModal('mat-modal')">
+    <div class="modal-card" style="max-width:920px;">
+      <div class="modal-header">
+        <h3>Danh Mục 105 Vật Tư Phụ & Nhân Công Lắp Đặt Chuẩn</h3>
+        <button class="modal-close" onclick="closeModal('mat-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:10px;margin-bottom:12px;">
+          <input type="text" id="mat-search" class="select-ctrl" style="flex:1;" placeholder="Tìm ống đồng, bảo ôn Superlon, ống PVC, dây Cadisun, côn đầu máy, cửa gió Slot..." oninput="renderMaterialPicker()" />
+          <select id="mat-group-filter" class="select-ctrl" onchange="renderMaterialPicker()">
+            <option value="ALL">Tất cả 5 nhóm Phần B</option>
+            <option value="I">I. Lắp đặt thiết bị & Giá đỡ</option>
+            <option value="II">II. Ống đồng, bảo ôn & Trunking</option>
+            <option value="III">III. Ống nước ngưng & Bảo ôn</option>
+            <option value="IV">IV. Điện nguồn & Tín hiệu</option>
+            <option value="V">V. Côn đầu máy, Ống gió & Cửa gió</option>
+          </select>
+        </div>
+        <div class="data-table-wrap" style="max-height:460px;overflow-y:auto;">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Nhóm</th>
+                <th>Tên Vật tư / Nhân công</th>
+                <th>Nhãn hiệu</th>
+                <th>Loại</th>
+                <th>ĐVT</th>
+                <th>Đơn giá gốc</th>
+                <th>Chọn</th>
+              </tr>
+            </thead>
+            <tbody id="mat-picker-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 4: ADD / EDIT MODEL & ROOM DETAILED EDITOR
+       ====================================================================== -->
+  <div id="edit-model-modal" class="modal-backdrop" onclick="if(event.target===this)closeModal('edit-model-modal')">
+    <div class="modal-card" style="max-width:900px;">
+      <div class="modal-header">
+        <h3 id="emm-title">Cập Nhật / Thêm Mới Model Thiết Bị</h3>
+        <button class="modal-close" onclick="closeModal('edit-model-modal')">✕</button>
+      </div>
+      <div class="modal-body" id="emm-body"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 6: MULTI-PROVIDER AI MODEL LOGIN & ACCOUNT MANAGER
+       ====================================================================== -->
+  <div id="ai-login-modal" class="modal-backdrop" onclick="if(event.target===this)closeModal('ai-login-modal')">
+    <div class="modal-card" style="max-width:860px;">
+      <div class="modal-header">
+        <h3>🔐 Đăng Nhập Tài Khoản & Chọn Model AI (Gemini • ChatGPT • Claude • DeepSeek • OpenRouter • Ollama)</h3>
+        <button class="modal-close" onclick="closeModal('ai-login-modal')">✕</button>
+      </div>
+      <div class="modal-body" id="ai-login-body"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 5: VISUAL SPLIT-SCREEN EQUIPMENT SELECTOR (CLEAR IMAGE + SPECS)
+       ====================================================================== -->
+  <div id="equip-picker-modal" class="modal-backdrop" onclick="if(event.target===this)closeModal('equip-picker-modal')">
+    <div class="modal-card" style="max-width:1160px;">
+      <div class="modal-header">
+        <h3>🔍 Chọn Thiết Bị Đưa Vào Công Trình — Xem Trực Quan Hình Ảnh & Đầy Đủ Thông Số Kỹ Thuật</h3>
+        <button class="modal-close" onclick="closeModal('equip-picker-modal')">✕</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px;">
+        <div style="display:grid;grid-template-columns:1fr 240px;gap:10px;margin-bottom:12px;">
+          <input type="text" id="epm-search" class="select-ctrl" placeholder="Nhập mã Model (VD: FXSQ63, RXYQ14, FBFC100, FTHF35), công suất hoặc KT côn..." oninput="renderQuickEquipPickerList()" />
+          <select id="epm-cat" class="select-ctrl" onchange="renderQuickEquipPickerList()">
+            <option value="ALL">Tất cả dòng sản phẩm</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start;">
+          <div class="data-table-wrap" style="max-height:500px;overflow-y:auto;" id="epm-list-wrap"></div>
+          <div id="epm-detail-preview" style="background:#F8FAFC;border:1.5px solid #CBD5E1;border-radius:12px;padding:16px;min-height:500px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="js/data.js?v=20261124_5" charset="UTF-8"></script>
+  <script src="js/app.js?v=20261124_5" charset="UTF-8"></script>
+  <script src="js/quote.js?v=20261124_5" charset="UTF-8"></script>
+  <script src="js/hvac_pro.js?v=20261124_5" charset="UTF-8"></script>
+  <script>
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+  </script>
+</body>
+</html>

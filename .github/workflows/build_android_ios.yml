@@ -1,0 +1,83 @@
+name: Build Android APK & iOS IPA (Minh Phu HVAC)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-android-apk:
+    name: Build Android (.apk)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Sync latest web assets into Android project
+        run: |
+          rm -rf android_apk_project/app/src/main/assets/www
+          mkdir -p android_apk_project/app/src/main/assets/www
+          cp -R web/* android_apk_project/app/src/main/assets/www/
+
+      - name: Build Debug APK
+        working-directory: android_apk_project
+        run: gradle assembleDebug --no-daemon
+
+      - name: Upload Android APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinhPhu_Daikin_Quote_Android_APK
+          path: android_apk_project/app/build/outputs/apk/debug/app-debug.apk
+
+  build-ios-ipa:
+    name: Build iOS (.ipa)
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Sync latest web assets into iOS project
+        run: |
+          rm -rf ios_ipa_project/www
+          cp -R web ios_ipa_project/www
+
+      - name: Generate Xcode project & Build Unsigned IPA (arm64)
+        working-directory: ios_ipa_project
+        run: |
+          xcodegen generate --spec project.yml
+          xcodebuild \
+            -project MinhPhuHVAC.xcodeproj \
+            -scheme MinhPhuHVAC \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build_ios \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build
+          mkdir -p Payload
+          cp -R build_ios/Build/Products/Release-iphoneos/MinhPhuHVAC.app Payload/
+          zip -qry MinhPhu_Daikin_Quote_iOS.ipa Payload
+
+      - name: Upload iOS IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinhPhu_Daikin_Quote_iOS_IPA
+          path: ios_ipa_project/MinhPhu_Daikin_Quote_iOS.ipa
